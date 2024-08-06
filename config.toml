@@ -1,0 +1,17 @@
+baseURL = 'http://example.org/'
+languageCode = 'en-us'
+title = 'OMAR.A'
+
+
+paginate = 4
+
+[params]
+  description = "My Tech Blog"
+  dateFormat = "Jan 2, 2006 03:04:05 PM"
+
+  [params.social]
+    linkedin = 'https://www.linkedin.com/in/omar-a-5956ba215/'
+    github = 'https://github.com/civilcoder55'
+
+[taxonomies]
+  category = "categories"
