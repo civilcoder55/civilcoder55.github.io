@@ -3,7 +3,7 @@ languageCode = 'en-us'
 title = 'OMAR.A'
 
 
-paginate = 4
+paginate = 10
 
 [params]
   description = "My Tech Blog"
