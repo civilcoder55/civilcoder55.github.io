@@ -17,7 +17,7 @@ body {
   font-size: 16px;
 }
 
-body.light{
+body.light {
   --bg: #dee4eb;
   --text: #1a2237;
 }
@@ -55,6 +55,7 @@ a {
   position: sticky;
   top: 0;
   background-color: var(--bg);
+  flex-wrap: wrap;
 }
 
 .logo {
@@ -165,7 +166,7 @@ a {
   font-size: 14px;
 }
 
-.pagination{
+.pagination {
   display: flex;
   gap: 10px;
   list-style: none;
@@ -176,7 +177,7 @@ a {
   margin-bottom: 30px;
 }
 
-.page-item{
+.page-item {
   border: 1px solid gray;
   width: 30px;
   height: 30px;
@@ -186,11 +187,12 @@ a {
   border-radius: 5px;
 }
 
-.page-item.active{
+.page-item.active {
   background-color: var(--text);
   color: var(--bg);
 }
-.page-item.disabled{
+
+.page-item.disabled {
   background-color: #313845;
   cursor: not-allowed;
 }
@@ -226,6 +228,7 @@ a {
   display: flex;
   align-items: center;
   gap: 20px;
+  flex-wrap: wrap;
 }
 
 .single-avatar {
@@ -251,9 +254,10 @@ a {
 
 .single-bottom {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   gap: 50px;
   margin-top: 50px;
+  max-width: 1136px !important;
 }
 
 .single-content {
@@ -269,11 +273,6 @@ a {
   margin: 20px 0px;
 }
 
-.single-content img {
-  width: 100%;
-  object-fit: cover;
-}
-
 .single-content pre {
   width: 100%;
   overflow-x: scroll;
@@ -282,21 +281,47 @@ a {
 
 /* SINGLE END */
 
+
+/* Markdown Styles START */
+
+.md-img__a {
+  display: flex;
+  justify-content: center;
+}
+
+.md-img {
+  display: block;
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .25);
+  border: 1px solid rgba(0, 0, 0, .5);
+  max-width: 850px;
+  height: auto;
+  box-sizing: border-box;
+}
+
+
+/* Markdown Styles END */
+
+
 @media (max-width: 1536px) {
   .container {
     max-width: 1366px;
   }
 }
+
 @media (max-width: 1366px) {
   .container {
     max-width: 1280px;
   }
 }
+
 @media (max-width: 1280px) {
   .container {
     max-width: 1024px;
   }
 }
+
 @media (max-width: 1024px) {
   .container {
     max-width: 768px;
@@ -312,10 +337,12 @@ a {
     flex-direction: column-reverse;
   }
 }
+
 @media (max-width: 768px) {
   .container {
     max-width: 640px;
   }
+
   .links {
     font-size: 14px;
   }
@@ -323,22 +350,23 @@ a {
   .list-Item__image {
     display: none;
   }
+
+  .links a {
+    display: none;
+  }
+
+  .md-img {
+    max-width: 100%;
+    width: auto;
+  }
+
+  .single-head__title {
+    font-size: 20px;
+  }
 }
+
 @media (max-width: 640px) {
   .container {
     max-width: 475px;
   }
 }
-
-
-/* Markdown Styles START */
-
-.md-img {
-  display: block;
-  max-width: 100%;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, .25);
-  border: 1px solid rgba(0, 0, 0, .5);
-  border-radius: 15px;
-}
-
-/* Markdown Styles END */

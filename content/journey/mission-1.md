@@ -1,15 +1,13 @@
 ---
-title: "Sw Journey: Mission 1"
-date: 2024-08-06T19:11:50+03:00
-draft: true
-description: "Software Journey Mission 1"
-image: "/images/journey/1.jpg"
-imageBig: "/images/journey/1.jpg"
-categories: ["journey", "k8s", "kubernetes"]
+title: "My Journey: K8s and Helm"
+date: 2024-08-05T19:11:50+03:00
+draft: false
+description: "Discovering Kubernetes and Helm Charts"
+image: "/images/journey/k8s.png"
+imageBig: "/images/journey/k8s.png"
+categories: ["journey", "k8s", "kubernetes", "helm", "helm-charts", "docker"]
 avatar: "/images/avatar.webp"
 ---
-
-I'm starting a journey to build random stuff, and apply and practice Backend Engineering, I will go from a Monolithic application to a Microservices exploring and building cool stuff and Proof of Concepts. 🚀💻
 
 ## Mission 1
 
@@ -48,25 +46,4 @@ the API will be a **Incantogamus app** a simple CRUD application for video games
   - The Helm Chart is accessible at: https://civilcoder55.github.io/learning-helm-charts/
   - updated the application readme to include the Helm Chart usage. https://github.com/civilcoder55/incantogamus
 
-## Mission 2
 
-- [x] Discover Prometheus and Grafana
-
-  - I discovered Prometheus, understanding its functionality and how to use it for monitoring applications. Additionally, I learned about Grafana and how to visualize the metrics collected by Prometheus.
-  - I also gained knowledge on creating and using an Exporter to gather metrics from an application and expose them to Prometheus.
-
-- [x] Collect and Visualize Asterisk Metrics
-
-  - I collected metrics from an Asterisk server using the Asterisk `res_prometheus` module and exposed them to Prometheus.
-  - I visualized these metrics using a simple Grafana dashboard.
-  - Additionally, I used `node_exporter` to collect metrics from the Asterisk server node.
-
-  ![incantogamus](/images/journey/prom-1.png)
-
-  ![incantogamus](/images/journey/prom-2.png)
-
-  ![incantogamus](/images/journey/prom-3.png)
-
-- [ ] Collect K8s Cluster Metrics Using Prometheus
-- [ ] Visualize the Metrics Using Grafana
-- [ ] Create Alerts using Prometheus Alertmanager

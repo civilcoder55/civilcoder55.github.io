@@ -1,4 +1,4 @@
-<a href="{{ .Destination | safeURL }}" class="lightbox-image current gallery">
+<a href="{{ .Destination | safeURL }}" class="lightbox-image current gallery md-img__a">
   <img class='md-img' src="{{ .Destination | safeURL }}" {{- with .Text }} alt="{{ . }}" {{ end -}} {{- with .Title }}
     title="{{ . }}" {{ end -}}>
 </a>
