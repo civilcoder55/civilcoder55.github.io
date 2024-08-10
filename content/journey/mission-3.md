@@ -1,8 +1,8 @@
 ---
-title: "Managing authorizations in microservices."
+title: "Managing Authorization in Microservices "
 date: 2024-08-09T20:11:50+03:00
 draft: false
-description: "Discovering a way to manage authorizations and permissions in a microservices architecture using authorizations-as-service."
+description: "Discovering a way to manage authorization and permissions in microservices architecture using authorization-as-a-service 🔐."
 image: "/images/journey/auth-as-service.png"
 imageBig: "/images/journey/auth-as-service.png"
 categories:
@@ -12,27 +12,31 @@ avatar: "/images/avatar.webp"
 
 ## Authorizations in Microservices
 
-While developing a monolithic application, managing authorizations and permissions is a bit easier, as you can have a single point of control for all the authorizations and permissions. However, microservices have become a bit more complex.
+When developing a monolithic application, managing authorizations and permissions is a bit easier since you have a single point of control for all authorizations and permissions. However, with the rise of microservices, this task becomes more complex.
 
-In a microservices architecture, each service has its own database and logic for handling permissions. This can lead to a lot of duplication and inconsistency in the way permissions are managed across services. also, there will be an issue of sharing the permissions across services.
+In a microservices architecture, each service typically has its own database and logic for handling permissions. This can lead to duplication and inconsistency in how permissions are managed across services. Additionally, sharing permissions between services can become problematic.
 
-One way to solve this issue is to use an authorization-as-service. This means that you have a separate service that is responsible for managing all the authorizations for all the services in your architecture.
+One way to solve this issue is by using **Authorization-as-a-Service** 🔐. This approach involves creating a separate service dedicated to managing all authorizations for the various services within your architecture. This centralizes control, ensuring consistency and simplifying the management of permissions across your microservices. 🌐
 
 
-### POC
+### Proof of Concept (POC) 🚀
 
 Today I will do a quick proof of concept. I will use an open source that provide this functionality, there are a lot, 
 
-#### Some of Open source solutions
+Today, I'll do a quick proof of concept (POC) to explore authorization management. I'll use an open-source solution that provides this functionality
+
+there are plenty of options available.
+
+#### Some of Open-Source solutions 🛠️
 - perimfy
 - openfga
 - casbin
 - topaz
 
-#### Cloud solutions
+#### Cloud solutions ☁️
 - there are good cloud solutions like [Permit.io](https://www.permit.io)
 
-For today poc I will use [Permify](https://permify.co/).
+For today's POC, I'll be using [Permify](https://permify.co/). ✅
 
 ![permify](https://user-images.githubusercontent.com/34595361/196884110-147862c9-3657-4f07-831c-3e0d0e39eccf.png)
 ---
@@ -47,9 +51,11 @@ For today poc I will use [Permify](https://permify.co/).
 ![step](/images/journey/auth-2.png)
 ---
 
-3. Created our schema, I used here the traditional RBAC model for simplicity. but in the real world and complex apps, there are a lot of models for complex use cases. Actually, Permify is considered as fine-grained access control service inspired by `Google’s Zanzibar`.
+3. Created our schema, using the traditional RBAC model for simplicity 🔧. However, in real-world, complex applications, there are many models designed to handle complex use cases.
 
-    Permify has a gread article about their solution [Here](https://docs.permify.co/permify-overview/authorization-service)
+In fact, **Permify** is considered as fine-grained access control service, inspired by `Google’s Zanzibar`. 🌐 This allows for more detailed and flexible permission management, making it suitable for more complex scenarios.
+
+  **Permify** has a great article about their solution [Here](https://docs.permify.co/permify-overview/authorization-service)
 
 ![step](/images/journey/auth-3.png)
 ---
