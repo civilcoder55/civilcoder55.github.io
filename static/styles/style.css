@@ -156,6 +156,7 @@ a {
 .list-item__categories {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .list-item__category {
@@ -362,6 +363,10 @@ a {
 
   .single-head__title {
     font-size: 20px;
+  }
+
+  .list-item__image {
+    display: none;
   }
 }
 
