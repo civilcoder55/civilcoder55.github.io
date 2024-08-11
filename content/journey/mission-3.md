@@ -21,8 +21,6 @@ One way to solve this issue is by using **Authorization-as-a-Service** 🔐. Thi
 
 ### Proof of Concept (POC) 🚀
 
-Today I will do a quick proof of concept. I will use an open source that provide this functionality, there are a lot, 
-
 Today, I'll do a quick proof of concept (POC) to explore authorization management. I'll use an open-source solution that provides this functionality
 
 there are plenty of options available.
