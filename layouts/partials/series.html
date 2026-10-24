@@ -1,0 +1,32 @@
+{{- /*
+  Series navigation for posts that set `series` in front matter.
+  Context: dict "page" <page> "variant" "badge"|"list"
+*/ -}}
+{{- $page := .page -}}
+{{- with $page.Params.series -}}
+  {{- $name := . -}}
+  {{- $parts := sort (where site.RegularPages "Params.series" $name) "Date" -}}
+  {{- $current := 0 -}}
+  {{- range $i, $p := $parts -}}
+    {{- if eq $p.RelPermalink $page.RelPermalink }}{{ $current = add $i 1 }}{{ end -}}
+  {{- end -}}
+
+  {{- if eq $.variant "badge" -}}
+<p class="series-badge">Part {{ $current }} of {{ len $parts }} · {{ $name }}</p>
+  {{- else if gt (len $parts) 1 -}}
+<nav class="series" aria-label="{{ $name }}">
+  <p class="series__title">{{ $name }}</p>
+  <ol class="series__list">
+    {{- range $parts }}
+    <li class="series__item">
+      {{- if eq .RelPermalink $page.RelPermalink }}
+      <span class="series__link series__link--current" aria-current="page">{{ .Title }}</span>
+      {{- else }}
+      <a class="series__link" href="{{ .RelPermalink }}">{{ .Title }}</a>
+      {{- end }}
+    </li>
+    {{- end }}
+  </ol>
+</nav>
+  {{- end -}}
+{{- end -}}

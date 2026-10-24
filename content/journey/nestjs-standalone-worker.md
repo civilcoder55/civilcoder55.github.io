@@ -3,13 +3,12 @@ title: "NestJS Standalone Worker"
 date: 2024-08-29T20:11:50+03:00
 draft: false
 description: "Create a standalone worker using NestJS to handle background tasks and offload heavy processing from the main application. 🚀"
-image: "/images/nest/logo.svg"
-imageBig: "/images/nest/logo.webp"
-categories: ["nestjs", "worker", "background-tasks", "bullmq"]
+topics: ["NestJS", "Worker", "Background Tasks", "BullMQ"]
+thumbnail: "/images/nest/logo.svg"
 avatar: "/images/avatar.webp"
 ---
 
-### Introduction 🚀
+## Introduction 🚀
 
 When building an API server, it's crucial to keep the request-response cycle as short as possible to serve responses fast. However, some tasks, like sending emails, processing images, or running long queries, can be time-consuming. In these cases, it's better to handle these tasks in the background rather than keeping the client waiting.
 
@@ -19,9 +18,10 @@ By default, BullMQ runs the `worker` (also known as the `consumer` or `processor
 
 ---
 
-### Let's Dive In 🔍
+## Let's Dive In 🔍
 
-##### 🛠️ First, Create a new NestJS application with TypeORM and BullMQ to test our goals.
+🛠️ First, create a new NestJS application with TypeORM and BullMQ to test our goals.
+
 ```bash
 npm i -g @nestjs/cli
 nest new nest-worker
@@ -29,11 +29,10 @@ cd nest-worker
 npm i --save @nestjs/typeorm typeorm pg
 npm i --save @nestjs/bullmq bullmq
 ```
-#
 
-##### 🛠️ Configure the app and creates a simple API with a single endpoint to add a job to a test queue.
-###### | 📄 src/app.module.ts
-```typescript
+🛠️ Configure the app and create a simple API with a single endpoint to add a job to a test queue.
+
+```typescript {title="src/app.module.ts"}
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -66,10 +65,8 @@ import { BullModule } from "@nestjs/bullmq";
 })
 export class AppModule {}
 ```
-#
-###### | 📄  src/app.service.ts
 
-```typescript
+```typescript {title="src/app.service.ts"}
 import { InjectQueue } from "@nestjs/bullmq";
 import { Injectable, Logger } from "@nestjs/common";
 import { Queue } from "bullmq";
@@ -92,10 +89,8 @@ export class AppService {
   }
 }
 ```
-#
-###### | 📄  src/app.controller.ts
 
-```typescript
+```typescript {title="src/app.controller.ts"}
 import { Controller, Get, Post } from "@nestjs/common";
 import { AppService } from "./app.service";
 
@@ -114,14 +109,12 @@ export class AppController {
   }
 }
 ```
-![img](/images/nest/2024-08-30_02-55.png)
 
+![Terminal logs showing a POST to /add-job and the job being added to the queue](/images/nest/2024-08-30_02-55.png)
 
-#
-##### 🛠️ Now let's create a new processor to handle the job.
-###### | 📄  src/test.processor.ts
+🛠️ Now let's create a new processor to handle the job.
 
-```typescript
+```typescript {title="src/test.processor.ts"}
 import { Processor, WorkerHost } from "@nestjs/bullmq";
 import { Job } from "bullmq";
 import { Logger } from "@nestjs/common";
@@ -136,23 +129,22 @@ export class TestProcessor extends WorkerHost {
   }
 }
 ```
-#
-##### register the processor in the app module providers
-###### src/app.module.ts
-```typescript
+
+Register the processor in the app module providers.
+
+```typescript {title="src/app.module.ts"}
   providers: [AppService, TestProcessor],
 ```
 
-![img](/images/nest/2024-08-30_02-59.png)
+![Terminal logs showing TestProcessor processing the job with its "hello from queue" payload](/images/nest/2024-08-30_02-59.png)
 
 ---
 
-### First Problem: Event Loop Blocking Tasks 🚨
+## First Problem: Event Loop Blocking Tasks 🚨
 
-##### 🛠️  Let's simulate an event loop blocking task in the processor.
+🛠️  Let's simulate an event loop blocking task in the processor.
 
-###### | 📄  src/test.processor.ts
-```typescript
+```typescript {title="src/test.processor.ts"}
 import { Processor, WorkerHost } from "@nestjs/bullmq";
 import { Job } from "bullmq";
 import { Logger } from "@nestjs/common";
@@ -170,21 +162,20 @@ export class TestProcessor extends WorkerHost {
   }
 }
 ```
-#
-##### 👀 As we can see, the processor will handle the long-running task, blocking the event loop, and the API server will be blocked.
 
-![img](/images/nest/2024-08-30_03-07.gif)
+👀 As we can see, the processor will handle the long-running task, blocking the event loop, and the API server will be blocked.
+
+![Demo of a long-running job blocking the API server](/images/nest/2024-08-30_03-07.gif)
 
 ---
 
-### Second Problem: Database Connection Pool 🚨
+## Second Problem: Database Connection Pool 🚨
 
-##### Another problem with this approach is the database connection pool. If processors acquire all database connections, the API server will be blocked until a connection is released. Let's test this case.
+Another problem with this approach is the database connection pool. If processors acquire all database connections, the API server will be blocked until a connection is released. Let's test this case.
 
-#
-##### 🛠️ Specify the max number of connections in the TypeORM configuration.
-###### | 📄  src/app.module.ts
-```typescript
+🛠️ Specify the max number of connections in the TypeORM configuration.
+
+```typescript {title="src/app.module.ts"}
   TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -196,10 +187,10 @@ export class TestProcessor extends WorkerHost {
       extra: { max: 2 },
   }),
 ```
-#
-##### 🛠️ Add a simple query to the API controller and a long-running query to the processor.
-###### | 📄  src/app.service.ts
-```typescript
+
+🛠️ Add a simple query to the API controller and a long-running query to the processor.
+
+```typescript {title="src/app.service.ts"}
 import { InjectQueue } from "@nestjs/bullmq";
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
@@ -228,9 +219,8 @@ export class AppService {
   }
 }
 ```
-#
-###### | 📄  src/test.processor.ts
-```typescript
+
+```typescript {title="src/test.processor.ts"}
 import { Processor, WorkerHost } from "@nestjs/bullmq";
 import { Job } from "bullmq";
 import { Logger } from "@nestjs/common";
@@ -254,21 +244,18 @@ export class TestProcessor extends WorkerHost {
   }
 }
 ```
-#
-#
-##### ℹ️ We have 3 conncurrent processors, and only 2 database connections. If we add 2 jobs to the queue, the third API request will be blocked until a connection is released, 👀 As we see in the GIF below.
 
-![img](/images/nest/2024-08-30_03-25.gif)
+ℹ️ We have 3 concurrent processors and only 2 database connections. If we add 2 jobs to the queue, the third API request will be blocked until a connection is released. 👀 As we see in the GIF below.
+
+![Demo of API requests stalling while processors hold every database connection](/images/nest/2024-08-30_03-25.gif)
 
 ---
 
-### A Possible Solution For Problem 2: Separate Database Connection for the processors 💡
+## A Possible Solution For Problem 2: Separate Database Connection for the processors 💡
 
-##### ℹ️ We can solve this by creating a separate TypeORM datasource for the processors. This way, a long running queries in the processors will not block the API server.
+ℹ️ We can solve this by creating a separate TypeORM datasource for the processors. This way, long-running queries in the processors will not block the API server.
 
-#
-###### | 📄 src/app.module.ts
-```typescript
+```typescript {title="src/app.module.ts"}
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -315,9 +302,8 @@ import { TestProcessor } from "./test.processor";
 })
 export class AppModule {}
 ```
-#
-###### | 📄  src/test.processor.ts
-```typescript
+
+```typescript {title="src/test.processor.ts"}
 import { Processor, WorkerHost } from "@nestjs/bullmq";
 import { Job } from "bullmq";
 import { Logger } from "@nestjs/common";
@@ -343,9 +329,8 @@ export class TestProcessor extends WorkerHost {
   }
 }
 ```
-#
-###### | 📄 src/app.service.ts
-```typescript
+
+```typescript {title="src/app.service.ts"}
 import { InjectQueue } from "@nestjs/bullmq";
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
@@ -374,37 +359,36 @@ export class AppService {
   }
 }
 ```
-#
-##### ℹ️ the processor can process only 2 jobs due to max database connections, but the API will no longer be blocked by the processor queries. Let's test this
 
+ℹ️ The processor can process only 2 jobs due to max database connections, but the API will no longer be blocked by the processor queries. Let's test this.
 
-![img](/images/nest/2024-08-30_03-34.gif)
+![Demo of the API staying responsive once processors use their own database connections](/images/nest/2024-08-30_03-34.gif)
 
-##### 👀 As we can see the API is not blocked, and it can queue the jobs even if the processors are running long queries.
-#
+👀 As we can see, the API is not blocked, and it can queue the jobs even if the processors are running long queries.
+
 ---
 
-### A Possible Solution For Problem 1: Separate Process 💡
+## A Possible Solution For Problem 1: Separate Process 💡
 
-##### ℹ️ We can solve the first problem by running the processor in a separate forked process. 👉🏻 [separate-processes](https://docs.nestjs.com/techniques/queues#separate-processes) 👈🏻 this approach can't utilize dependency injection system and NestJS IOC by default; however. there are some workarounds to make this possible.
-#
+ℹ️ We can solve the first problem by running the processor in a separate forked process. 👉🏻 [separate-processes](https://docs.nestjs.com/techniques/queues#separate-processes) 👈🏻 this approach can't utilize the dependency injection system and NestJS IoC by default; however, there are some workarounds to make this possible.
+
 ---
 
-### A Possible Solution For Problem 1: Standalone Worker💡
+## A Possible Solution For Problem 1: Standalone Worker 💡
 
-##### ℹ️ Another solution is to create a standalone worker using NestJS. This way we can run the worker in a separate event loop take advantage of the dependency injection system and NestJS IOC. It's a common NestJS app but without an API server—just a worker responsible for running BullMQ processors.
-#
-##### ℹ️ The worker still shares the same codebase as your Nest app, and this approach offers benefits like:
+ℹ️ Another solution is to create a standalone worker using NestJS. This way, we can run the worker in a separate event loop and take advantage of the dependency injection system and NestJS IoC. It's a common NestJS app but without an API server—just a worker responsible for running BullMQ processors.
+
+ℹ️ The worker still shares the same codebase as your Nest app, and this approach offers benefits like:
+
 - The Worker can be scaled independently from the API server, as a standalone service or deployment in Kubernetes.
+
 - The worker can be deployed on a separate machine, monitored, and managed separately.
+
 - The worker can have its own database connection pool without duplicating the database connection configuration.
 
-#
+🛠️ Let's make the worker standalone so it can run in a separate event loop.
 
-##### 🛠️ Let's make the worker as a standalone so it can run in a separate event loop.
-
-###### | 📄  src/app.module.ts
-```typescript
+```typescript {title="src/app.module.ts"}
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -432,15 +416,14 @@ import { BullModule } from "@nestjs/bullmq";
 })
 export class AppModule {}
 ```
-#
-###### 🛠️ Create a new module for the worker.
+
+🛠️ Create a new module for the worker.
+
 ```bash
 nest g module worker
 ```
-#
-###### | 📄  src/worker/worker.module.ts
 
-```typescript
+```typescript {title="src/worker/worker.module.ts"}
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { TestProcessor } from "../test.processor";
@@ -469,10 +452,10 @@ import { BullModule } from "@nestjs/bullmq";
 })
 export class WorkerModule {}
 ```
-#
-##### 🛠️ Create a new entry file for the worker,  similar to the main.ts file.
-###### | 📄  src/worker.ts
-```typescript
+
+🛠️ Create a new entry file for the worker, similar to the main.ts file.
+
+```typescript {title="src/worker.ts"}
 import { NestFactory } from "@nestjs/core";
 import { WorkerModule } from "./worker/worker.module";
 
@@ -481,13 +464,12 @@ async function bootstrap() {
 }
 bootstrap();
 ```
-#
-##### ℹ️ We can use the HTTP server, which can be helpful for health checks and metrics, or we can create a standalone NestJS application as we did.
-#
 
-##### 🛠️ Create a new `worker-cli.json` file in main directory and add a script in the `package.json` to run the worker.
-###### | 📄  worker-cli.json
-```json
+ℹ️ We can use the HTTP server, which can be helpful for health checks and metrics, or we can create a standalone NestJS application as we did.
+
+🛠️ Create a new `worker-cli.json` file in the main directory and add a script in the `package.json` to run the worker.
+
+```json {title="worker-cli.json"}
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
@@ -498,9 +480,8 @@ bootstrap();
   }
 }
 ```
-#
-###### | 📄  package.json
-```json
+
+```json {title="package.json"}
 {
   "scripts": {
     "worker:dev": "nest start --watch --config worker-cli.json",
@@ -508,30 +489,34 @@ bootstrap();
   }
 }
 ```
-#
-##### 👀 Result 
-![img](/images/nest/2024-08-30_06-48.gif)
 
-----
+👀 Result
 
-### 🔬 Auto Load Processors 🔬
+![Demo of the standalone worker processing jobs while the API keeps responding](/images/nest/2024-08-30_06-48.gif)
 
-##### 🛠️ Now let's do a something cool, lets create a way to autoload all processors in the app and register them.
+---
 
-#
-#### ℹ️ ℹ️ The autoloader will mainly do four steps
+## 🔬 Auto Load Processors 🔬
+
+🛠️ Now let's do something cool: let's create a way to autoload all processors in the app and register them.
+
+ℹ️ ℹ️ The autoloader will mainly do four steps
+
 - Load all processors from a glob pattern using the same importer used in TypeORM 😎
-- Get any dependencies for each processor using the metadata system in nestjs
+
+- Get any dependencies for each processor using the metadata system in NestJS
+
 - Get the queue name for each processor.
-- Import processors as providers, import and register queues in bullmq module and import dependencies.
-#
-##### Create a new module called `queue`.
+
+- Import processors as providers, import and register queues in the BullMQ module, and import dependencies.
+
+Create a new module called `queue`.
+
 ```bash
 nest g module queue
 ```
-#
-###### | 📄  src/queue/queue.module.ts
-```typescript
+
+```typescript {title="src/queue/queue.module.ts"}
 import { DynamicModule, Module } from "@nestjs/common";
 import { BullModule, WorkerHost } from "@nestjs/bullmq";
 import { importClassesFromDirectories } from "typeorm/util/DirectoryExportedClassesLoader";
@@ -579,10 +564,10 @@ export class QueueModule {
   }
 }
 ```
-#
-##### 🛠️ Remove any bullmq related code from the worker module, Use the queue module, and specify the processors' glob pattern.
-###### | 📄  src/worker/worker.module.ts
-```typescript
+
+🛠️ Remove any BullMQ-related code from the worker module, use the queue module, and specify the processors' glob pattern.
+
+```typescript {title="src/worker/worker.module.ts"}
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { TestProcessor } from "../test.processor";
@@ -608,17 +593,17 @@ import { QueueModule } from "src/queue/queue.module";
 })
 export class WorkerModule {}
 ```
-#
----
-#
-#### 👀 The final test 👀 
-![img](/images/nest/2024-08-30_07-01.gif)
-
-----
-
-#
-| [🔗 Source Code on Github 🔗](https://github.com/civilcoder55/nestjs-standalone-worker)
 
 ---
-#
-#### Don't hesitate to reach out to me if there is any mistake or you have any questions. 🚀
+
+### 👀 The final test 👀
+
+![Demo of the worker auto-loading its processors and handling jobs](/images/nest/2024-08-30_07-01.gif)
+
+---
+
+[🔗 Source Code on Github 🔗](https://github.com/civilcoder55/nestjs-standalone-worker)
+
+---
+
+Don't hesitate to reach out to me if there are any mistakes or you have any questions. 🚀

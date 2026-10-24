@@ -1,0 +1,7 @@
+{{- /* Hugo's built-in GoAT diagrams, capped at their natural width so ASCII
+       art doesn't scale up to fill the column. */ -}}
+{{- $diagram := diagrams.Goat .Inner -}}
+<figure class="goat" style="--goat-width: {{ $diagram.Width }}px">
+  {{ $diagram.Wrapped }}
+</figure>
+{{- /* chomp */ -}}

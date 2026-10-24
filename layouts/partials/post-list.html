@@ -1,0 +1,13 @@
+{{- /* Posts grouped by year: the year sits in a left gutter on wide screens. */ -}}
+<div class="post-list">
+  {{- range .GroupByDate "2006" }}
+  <section class="post-year" aria-labelledby="year-{{ .Key }}">
+    <h2 class="post-year__label" id="year-{{ .Key }}">{{ .Key }}</h2>
+    <div class="post-year__items">
+      {{- range .Pages }}
+      {{ partial "post-list-item.html" . }}
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+</div>

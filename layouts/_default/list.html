@@ -1,39 +1,24 @@
 {{ define "main" }}
-<div class="list">
-  {{ range .Paginator.Pages }}
-  
-  <div class="list-item">
-    <img src={{ .Params.image }} alt="{{.Title}}" class="list-item__image" loading="lazy" />
-
-    <div class="list-item__texts">
-      <h1 class="list-item__title">
-        <a href="{{.Permalink}}">{{.Title}}</a>
-      </h1>
-
-
-      <p class="list-item__desc">{{.Params.description}}</p>
-      
-      <div class="list-item__detail">
-        <img src="{{.Params.avatar}}" loading="lazy" alt="" class="list-item__avatar" />
-        <span>{{ range (.GetTerms "authors")}}
-          <a href={{.Permalink}}>{{ .Name }}</a>
-          {{end}}</span>
-        <time>{{ dateFormat .Site.Params.dateFormat .Date}}</time>
-      </div>
-      
-      
-      <div class="list-item__categories">
-        {{ range (.GetTerms "categories") }}
-        <a class="list-item__category" href={{ .Permalink }}>{{ .Name }}</a>
-        {{ end }}
-      </div>
-    </div>
-  </div>
-
-
-  <div class="divider"></div>
-
-  {{ end }} {{ template "_internal/pagination.html" . }}
-
+{{- if .IsHome }}
+<div class="intro">
+  {{- with .Site.Params.authorAvatar }}
+  <img class="intro__avatar" src="{{ . | relURL }}" width="64" height="64" alt="" decoding="async">
+  {{- end }}
+  <h1 class="intro__name">{{ .Site.Params.author }}</h1>
+  {{- with .Site.Params.authorRole }}
+  <p class="intro__role">{{ . }}</p>
+  {{- end }}
+  <p class="intro__bio">{{ .Site.Params.description }}</p>
 </div>
+{{- else }}
+<div class="page-intro">
+  <h1 class="page-intro__title">{{ .Title }}</h1>
+  <p class="page-intro__desc">{{ or .Params.description .Site.Params.description }}</p>
+</div>
+{{- end }}
+
+{{- $pages := cond .IsHome (where site.RegularPages "Section" "in" site.Params.mainSections) .Pages }}
+{{ partial "post-list.html" (.Paginate $pages).Pages }}
+
+{{ template "_internal/pagination.html" . }}
 {{ end }}

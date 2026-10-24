@@ -1,0 +1,6 @@
+<figure class="code">
+  <figcaption class="code__header">
+    <span class="code__label">{{ .Type }}</span>
+  </figcaption>
+  {{ (transform.HighlightCodeBlock . (dict "lineNos" false)).Wrapped }}
+</figure>

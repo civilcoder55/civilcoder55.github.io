@@ -1,0 +1,31 @@
+{{- /*
+  Returns a 1200x630 social card for the page: site name, the page title in
+  Martian Mono, and the site host. Front matter `image` (a path under assets/
+  or static/) overrides it.
+*/ -}}
+{{- $url := "" -}}
+
+{{- with .Params.image -}}
+  {{- $path := strings.TrimPrefix "/" . -}}
+  {{- with or ($.Resources.Get $path) (resources.Get $path) -}}
+    {{- $url = .Permalink -}}
+  {{- else -}}
+    {{- $url = . | absURL -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if not $url -}}
+  {{- $base := resources.Get "images/og-base.png" -}}
+  {{- $font := resources.Get "fonts/MartianMono-Bold.ttf" -}}
+  {{- $headline := cond .IsHome site.Params.description .Title -}}
+  {{- $size := cond (gt (len $headline) 60) 44 56 -}}
+  {{- $host := (urls.Parse site.BaseURL).Host -}}
+  {{- $card := $base | images.Filter
+    (images.Text site.Title (dict "font" $font "size" 26 "color" "#8a8a8a" "x" 80 "y" 72))
+    (images.Text $headline (dict "font" $font "size" $size "color" "#ffffff" "x" 80 "y" 190 "linespacing" 14))
+    (images.Text $host (dict "font" $font "size" 22 "color" "#a78bfa" "x" 80 "y" 530))
+  -}}
+  {{- $url = $card.Permalink -}}
+{{- end -}}
+
+{{- return $url -}}
