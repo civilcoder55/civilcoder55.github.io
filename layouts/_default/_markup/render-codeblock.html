@@ -1,0 +1,16 @@
+{{- /*
+  Fence attributes:
+    ```ts {title="worker.ts" hl_lines=[3,"5-7"]}
+  `title` labels the block (defaults to the language); `hl_lines`,
+  `linenos` and other Chroma options pass straight through.
+*/ -}}
+{{- $label := or .Attributes.title .Type -}}
+{{- $result := transform.HighlightCodeBlock . -}}
+<figure class="code">
+  <figcaption class="code__header">
+    <span class="code__label">{{ $label }}</span>
+    <button class="code__copy" type="button" hidden>Copy</button>
+  </figcaption>
+  {{ $result.Wrapped }}
+</figure>
+{{- /* chomp */ -}}

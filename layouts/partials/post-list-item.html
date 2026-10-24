@@ -1,0 +1,29 @@
+<article class="post-list__item">
+  <div class="post-list__body">
+    <h3 class="post-list__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    {{- with .Params.description }}
+    <p class="post-list__desc">{{ . }}</p>
+    {{- end }}
+    <p class="post-list__meta">
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2" }}</time>
+      <span>{{ .ReadingTime }} min read</span>
+    </p>
+  </div>
+  {{- with .Params.thumbnail }}
+  {{- with resources.Get (strings.TrimPrefix "/" .) }}
+  {{- /* SVG logos can't be cropped by Hugo, so they're centered instead. */}}
+  {{- if eq .MediaType.SubType "svg" }}
+  <a class="post-list__thumb post-list__thumb--logo" href="{{ $.RelPermalink }}" tabindex="-1" aria-hidden="true">
+    <img src="{{ .RelPermalink }}" alt="" loading="lazy" decoding="async">
+  </a>
+  {{- else }}
+  {{- /* Banners wider than 2:1 lose too much to a 16:9 crop, so they're fitted instead. */}}
+  {{- $wide := gt (div (float .Width) .Height) 2.0 }}
+  {{- $thumb := cond $wide (.Fit "480x270 webp q80") (.Fill "480x270 webp q80") }}
+  <a class="post-list__thumb{{ if $wide }} post-list__thumb--wide{{ end }}" href="{{ $.RelPermalink }}" tabindex="-1" aria-hidden="true">
+    <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" alt="" loading="lazy" decoding="async">
+  </a>
+  {{- end }}
+  {{- end }}
+  {{- end }}
+</article>

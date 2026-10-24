@@ -1,4 +1,57 @@
-<a href="{{ .Destination | safeURL }}" class="lightbox-image current gallery md-img__a">
-  <img class='md-img' src="{{ .Destination | safeURL }}" {{- with .Text }} alt="{{ . }}" {{ end -}} {{- with .Title }}
-    title="{{ . }}" {{ end -}}>
+{{- /*
+  Local raster images are resized to 850px and 1700px WebP (never upscaled;
+  native width fills the gap in between) and served with srcset. Links open
+  the full-resolution WebP. GIFs keep their animation and SVGs pass through;
+  both still get intrinsic dimensions where Hugo can read them. Remote
+  images render as-is.
+*/ -}}
+{{- $url := urls.Parse .Destination -}}
+{{- $alt := .PlainText -}}
+{{- $src := .Destination -}}
+{{- $href := .Destination -}}
+{{- $srcset := "" -}}
+{{- $width := 0 -}}
+{{- $height := 0 -}}
+
+{{- if not $url.IsAbs -}}
+  {{- $path := strings.TrimPrefix "/" $url.Path -}}
+  {{- with or (.Page.Resources.Get $path) (resources.Get $path) -}}
+    {{- $src = .RelPermalink -}}
+    {{- $href = .RelPermalink -}}
+    {{- if in (slice "png" "jpeg" "webp") .MediaType.SubType -}}
+      {{- $original := . -}}
+      {{- $variants := slice -}}
+      {{- range slice 850 1700 -}}
+        {{- if le . $original.Width -}}
+          {{- $variants = $variants | append ($original.Process (printf "resize %dx webp q85" .)) -}}
+        {{- end -}}
+      {{- end -}}
+      {{- /* Between 850 and 1700px wide, the native size is the sharpest 2x option. */ -}}
+      {{- if or (not $variants) (and (gt $original.Width 850) (lt $original.Width 1700)) -}}
+        {{- $variants = $variants | append ($original.Process "webp q85") -}}
+      {{- end -}}
+      {{- $first := index $variants 0 -}}
+      {{- $src = $first.RelPermalink -}}
+      {{- /* The lightbox opens the full-resolution image so screenshot text stays readable. */ -}}
+      {{- $href = ($original.Process "webp q90").RelPermalink -}}
+      {{- $width = $first.Width -}}
+      {{- $height = $first.Height -}}
+      {{- $parts := slice -}}
+      {{- range $variants -}}
+        {{- $parts = $parts | append (printf "%s %dw" .RelPermalink .Width) -}}
+      {{- end -}}
+      {{- $srcset = delimit $parts ", " -}}
+    {{- else if eq .MediaType.SubType "gif" -}}
+      {{- $width = .Width -}}
+      {{- $height = .Height -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+<a href="{{ $href | safeURL }}" class="md-img__a lightbox-image">
+  <img class="md-img" src="{{ $src | safeURL }}" alt="{{ $alt }}"
+    {{- with $srcset }} srcset="{{ . }}" sizes="(max-width: 900px) 100vw, 850px"{{ end }}
+    {{- if $width }} width="{{ $width }}" height="{{ $height }}"{{ end }}
+    loading="lazy" decoding="async">
 </a>
+{{- /* chomp */ -}}

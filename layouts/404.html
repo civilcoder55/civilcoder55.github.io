@@ -1,15 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Not Found</title>
-</head>
-
-<body>
-  Not Found
-  <a href="/">Go to homepage</a>
-</body>
-
-</html>
+{{ define "main" }}
+<div class="notfound">
+  <p class="notfound__code">404</p>
+  <p class="notfound__text">Page not found.</p>
+  <a class="notfound__link" href="{{ "/" | relURL }}">Back to Home</a>
+</div>
+{{ end }}

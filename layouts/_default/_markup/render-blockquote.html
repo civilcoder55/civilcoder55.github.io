@@ -1,0 +1,16 @@
+{{- /*
+  GitHub-style alerts:
+    > [!NOTE]  > [!TIP]  > [!IMPORTANT]  > [!WARNING]  > [!CAUTION]
+  An optional custom title follows the marker: > [!TIP] Faster builds
+*/ -}}
+{{- if eq .Type "alert" -}}
+<aside class="callout callout--{{ .AlertType }}" role="note">
+  <p class="callout__title">{{ with .AlertTitle }}{{ . }}{{ else }}{{ title .AlertType }}{{ end }}</p>
+  {{ .Text }}
+</aside>
+{{- else -}}
+<blockquote>
+  {{ .Text }}
+</blockquote>
+{{- end -}}
+{{- /* chomp */ -}}

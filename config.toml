@@ -1,17 +1,49 @@
-baseURL = 'http://example.org/'
-languageCode = 'en-us'
-title = 'OMAR.A'
+baseURL = 'https://civilcoder55.github.io/'
+locale = 'en-US'
+title = 'Omar A.'
+enableRobotsTXT = true
+# Hugo would otherwise title the "journey" section "Journeys".
+pluralizeListTitles = false
 
+# No taxonomy pages. `topics` in front matter is kept as plain metadata.
+disableKinds = ["taxonomy", "term"]
 
-paginate = 10
+[pagination]
+  pagerSize = 10
 
 [params]
-  description = "My Tech Blog"
-  dateFormat = "Jan 2, 2006 03:04:05 PM"
+  description = "Backend engineering notes. Learning by building, breaking things, and figuring them out along the way. Trying to stay curious and find my path in the AI era."
+  dateFormat = "January 2, 2006"
+  author = "Omar A."
+  authorRole = "Senior Software Engineer"
+  authorAvatar = "/images/avatar.webp"
+  mainSections = ["journey"]
 
   [params.social]
     linkedin = 'https://www.linkedin.com/in/omar-a-5956ba215/'
     github = 'https://github.com/civilcoder55'
+    email = 'temp.dev.56@gmail.com'
+    medium = 'https://medium.com/@omarae00'
 
-[taxonomies]
-  category = "categories"
+
+# "Updated" dates come only from an explicit `lastmod` in front matter. Git
+# dates would mark every post as updated whenever templates or tooling change.
+[frontmatter]
+  lastmod = ["lastmod", "date"]
+
+[markup]
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+    ordered = false
+  [markup.highlight]
+    # Inline styles: dark-only site, so there is no theme to switch and no
+    # generated chroma stylesheet to keep in sync.
+    noClasses = true
+    style = "github-dark"
+    tabWidth = 2
+    guessSyntax = true
+
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]

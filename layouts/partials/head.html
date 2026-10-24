@@ -1,0 +1,97 @@
+{{- $pageTitle := cond (eq .Kind "404") "Page not found" .Title -}}
+{{- $title := cond .IsHome (printf "%s · %s" site.Params.author site.Params.authorRole) (printf "%s — %s" $pageTitle .Site.Title) -}}
+{{- $desc := or .Params.description .Site.Params.description | plainify | chomp -}}
+
+{{- $ogImage := partial "og-image.html" . -}}
+{{- $isPost := and .IsPage (in site.Params.mainSections .Section) -}}
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ $title }}</title>
+<meta name="description" content="{{ $desc }}">
+<meta name="author" content="{{ .Site.Params.author }}">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#000000">
+{{- /* Posts first published elsewhere point search engines at the original. */}}
+{{- if eq .Kind "section" }}
+<meta name="robots" content="noindex, follow">
+{{- end }}
+<link rel="canonical" href="{{ or .Params.canonicalURL .Permalink }}">
+
+<meta property="og:type" content="{{ if $isPost }}article{{ else }}website{{ end }}">
+<meta property="og:site_name" content="{{ .Site.Title }}">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ $ogImage }}">
+{{- if not .Params.image }}
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+{{- end }}
+<meta property="og:image:alt" content="{{ cond .IsHome $title $pageTitle }}">
+<meta property="og:locale" content="{{ replace site.Language.Locale "-" "_" }}">
+{{- if $isPost }}
+<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+<meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+<meta property="article:author" content="{{ site.Params.author }}">
+{{- end }}
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ $title }}">
+<meta name="twitter:description" content="{{ $desc }}">
+<meta name="twitter:image" content="{{ $ogImage }}">
+<meta name="twitter:image:alt" content="{{ cond .IsHome $title $pageTitle }}">
+
+<link rel="icon" href="{{ "images/avatar.webp" | relURL }}">
+<link rel="apple-touch-icon" href="{{ "images/avatar.webp" | relURL }}">
+{{- with .OutputFormats.Get "rss" }}
+<link rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}" href="{{ .Permalink }}">
+{{- end }}
+
+{{- /* Self-hosted, latin subset. Licenses: /fonts/OFL-*.txt */}}
+<link rel="preload" href="{{ "fonts/inter-latin-v20.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ "fonts/martian-mono-700-latin-v6.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+
+{{- $css := slice (resources.Get "css/style.css") (resources.Get "css/lightbox.css") | resources.Concat "css/bundle.css" | resources.Minify | resources.Fingerprint "sha256" }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">
+
+{{- $js := slice (resources.Get "js/lightbox.js") (resources.Get "js/site.js") | resources.Concat "js/bundle.js" | resources.Minify | resources.Fingerprint "sha256" }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" crossorigin="anonymous" defer></script>
+
+{{- if .IsHome }}
+{{- $sameAs := slice }}
+{{- range slice "github" "linkedin" "medium" }}
+  {{- with index site.Params.social . }}{{ $sameAs = $sameAs | append . }}{{ end }}
+{{- end }}
+{{- $person := dict
+  "@type" "Person"
+  "name" site.Params.author
+  "jobTitle" site.Params.authorRole
+  "url" site.Home.Permalink
+  "image" (site.Params.authorAvatar | absURL)
+  "sameAs" $sameAs }}
+<script type="application/ld+json">
+{{ dict
+  "@context" "https://schema.org"
+  "@graph" (slice
+    (dict "@type" "WebSite" "name" site.Title "url" site.Home.Permalink "description" $desc "inLanguage" site.Language.Locale "author" $person)
+    $person)
+  | jsonify | safeJS }}
+</script>
+{{- end }}
+
+{{- if $isPost }}
+<script type="application/ld+json">
+{{ dict
+  "@context" "https://schema.org"
+  "@type" "BlogPosting"
+  "headline" .Title
+  "description" $desc
+  "image" $ogImage
+  "datePublished" (.Date.Format "2006-01-02")
+  "dateModified" (.Lastmod.Format "2006-01-02")
+  "author" (dict "@type" "Person" "name" .Site.Params.author "url" .Site.Params.social.github)
+  "mainEntityOfPage" .Permalink
+  | jsonify | safeJS }}
+</script>
+{{- end }}

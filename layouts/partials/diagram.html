@@ -1,0 +1,32 @@
+{{- /*
+  Renders a diagram code block to SVG at build time through Kroki, so the
+  page ships no diagram JavaScript. If Kroki can't be reached the build
+  still succeeds and the diagram source is shown as a code block instead.
+
+  Context: dict "block" <codeblock context> "engine" "mermaid"|"d2" "options" <dict of Kroki options>
+*/ -}}
+{{- $block := .block -}}
+{{- $headers := dict "Content-Type" "text/plain" -}}
+{{- range $key, $value := .options -}}
+  {{- $headers = merge $headers (dict (printf "Kroki-Diagram-Options-%s" $key) $value) -}}
+{{- end -}}
+{{- $request := dict "method" "post" "body" $block.Inner "headers" $headers -}}
+{{- $url := printf "https://kroki.io/%s/svg" .engine -}}
+
+{{- with try (resources.GetRemote $url $request) -}}
+  {{- with .Err -}}
+    {{- warnf "diagram: %s block in %q could not be rendered, showing source instead: %s" $.engine $block.Page.File.Path . -}}
+    {{- partial "diagram-fallback.html" $block -}}
+  {{- else with .Value -}}
+    {{- $svg := . | resources.Copy (printf "diagrams/%s.svg" (hash.XxHash (print $.engine $block.Inner))) -}}
+<figure class="diagram">
+  <img src="{{ $svg.RelPermalink }}" alt="{{ or $block.Attributes.alt (printf "%s diagram" $.engine) }}" loading="lazy" decoding="async">
+  {{- with $block.Attributes.caption }}
+  <figcaption>{{ . }}</figcaption>
+  {{- end }}
+</figure>
+  {{- else -}}
+    {{- warnf "diagram: %s block in %q returned nothing, showing source instead" $.engine $block.Page.File.Path -}}
+    {{- partial "diagram-fallback.html" $block -}}
+  {{- end -}}
+{{- end -}}

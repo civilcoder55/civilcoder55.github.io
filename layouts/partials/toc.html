@@ -1,0 +1,16 @@
+{{- /*
+  Rendered twice by single.html: as a sticky sidebar on wide screens and as a
+  collapsible block above the post on narrow ones. CSS shows one at a time.
+  Context: dict "page" <page> "variant" "aside"|"inline"
+*/ -}}
+{{- if eq .variant "aside" -}}
+<aside class="toc toc--aside" aria-label="On this page">
+  <p class="toc__title">On this page</p>
+  {{ .page.TableOfContents }}
+</aside>
+{{- else -}}
+<details class="toc toc--inline">
+  <summary class="toc__title">On this page</summary>
+  {{ .page.TableOfContents }}
+</details>
+{{- end -}}
