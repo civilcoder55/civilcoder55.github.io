@@ -1,0 +1,10 @@
+{{- $items := sort hugo.Data.opensource "date" "desc" }}
+<section class="oss-home" aria-labelledby="oss-home-title">
+  <h2 class="oss-home__title" id="oss-home-title">Recent pull requests</h2>
+  <ol class="oss-graph">
+    {{- range first 3 $items }}
+    {{ partial "oss/pr.html" . }}
+    {{- end }}
+  </ol>
+  <a class="oss-more" href="{{ "/open-source/" | relURL }}">All {{ len $items }} pull requests</a>
+</section>

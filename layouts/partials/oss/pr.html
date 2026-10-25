@@ -1,0 +1,23 @@
+{{- /* One pull request on the git graph. Merged branches rejoin the trunk,
+       open ones trail off dashed, closed ones end in a cross. */ -}}
+<li class="oss-pr oss-pr--{{ .status }}">
+  <svg class="oss-graph__lane" viewBox="0 0 40 56" aria-hidden="true">
+    <path d="M8 0 C8 12 28 8 28 18" />
+    {{- if eq .status "merged" }}
+    <circle cx="28" cy="24" r="4" />
+    <path d="M28 30 C28 40 8 38 8 52" />
+    {{- else if eq .status "open" }}
+    <circle cx="28" cy="24" r="3.5" class="oss-pr__hollow" />
+    <path d="M28 30 L28 56" class="oss-pr__dash" />
+    {{- else }}
+    <path d="M24.5 20.5 L31.5 27.5 M31.5 20.5 L24.5 27.5" />
+    {{- end }}
+  </svg>
+  <div class="oss-pr__body">
+    <p class="oss-pr__meta">
+      <span class="oss-pr__repo">{{ .repo }}</span>
+      <span class="oss-pr__status">{{ .status }}</span>
+    </p>
+    <a class="oss-pr__title" href="{{ .url }}" rel="noopener" target="_blank">{{ .title }}</a>
+  </div>
+</li>

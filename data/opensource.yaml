@@ -1,0 +1,122 @@
+# Pull requests to other people's projects, newest first.
+# status: merged | open | closed
+- repo: asterisk/asterisk
+  title: Preserve sub-second precision in the queue_log time column
+  url: https://github.com/asterisk/asterisk/pull/2073
+  date: 2026-08-18
+  status: merged
+- repo: livekit/sip
+  title: Add allow_custom_from_hostname option for the custom From header hostname
+  url: https://github.com/livekit/sip/pull/594
+  date: 2026-02-20
+  status: closed
+- repo: livekit/protocol
+  title: Add from_host field to the SIP outbound trunk
+  url: https://github.com/livekit/protocol/pull/1419
+  date: 2026-02-19
+  status: closed
+- repo: livekit/protocol
+  title: Filter SIP dispatch rules by called number
+  url: https://github.com/livekit/protocol/pull/1351
+  date: 2026-01-05
+  status: merged
+- repo: livekit/agents
+  title: Custom credentials for AWS STT
+  url: https://github.com/livekit/agents/pull/3840
+  date: 2025-11-12
+  status: merged
+- repo: livekit/agents
+  title: Fix the Groq LLM temperature type
+  url: https://github.com/livekit/agents/pull/2137
+  date: 2025-04-26
+  status: closed
+- repo: nestjs/nest
+  title: Add flatten options to ValidationPipe
+  url: https://github.com/nestjs/nest/pull/14359
+  date: 2025-01-03
+  status: open
+- repo: nginz/jsonapi-resources
+  title: Load includes from the resource class instead of the controller context
+  url: https://github.com/nginz/jsonapi-resources/pull/4
+  date: 2024-10-22
+  status: merged
+- repo: laravel/framework
+  title: Add whereRawIn to the query builder
+  url: https://github.com/laravel/framework/pull/52569
+  date: 2024-08-24
+  status: closed
+- repo: nginz/jsonapi-resources
+  title: Choose which resource eager loading applies to
+  url: https://github.com/nginz/jsonapi-resources/pull/3
+  date: 2024-03-18
+  status: merged
+- repo: nginz/jsonapi-resources
+  title: Include relations to avoid N+1 queries
+  url: https://github.com/nginz/jsonapi-resources/pull/2
+  date: 2024-03-14
+  status: merged
+- repo: rails/rails
+  title: Control Active Storage service URL caching
+  url: https://github.com/rails/rails/pull/49124
+  date: 2023-09-02
+  status: open
+- repo: chatwoot/chatwoot
+  title: Fix the contacts count when filtering
+  url: https://github.com/chatwoot/chatwoot/pull/7446
+  date: 2023-07-26
+  status: merged
+- repo: filamentphp/filament
+  title: Document copyableState for text, color and badge columns
+  url: https://github.com/filamentphp/filament/pull/7011
+  date: 2023-07-15
+  status: merged
+- repo: chatwoot/chatwoot
+  title: Fix label duplication in bulk actions
+  url: https://github.com/chatwoot/chatwoot/pull/7341
+  date: 2023-06-22
+  status: merged
+- repo: chatwoot/chatwoot
+  title: Stop blob URLs from being cached
+  url: https://github.com/chatwoot/chatwoot/pull/7063
+  date: 2023-05-11
+  status: closed
+- repo: chatwoot/chatwoot
+  title: Receive Telegram location messages
+  url: https://github.com/chatwoot/chatwoot/pull/6158
+  date: 2023-01-04
+  status: merged
+- repo: chatwoot/chatwoot
+  title: Fix the confirmation email template on email update
+  url: https://github.com/chatwoot/chatwoot/pull/5937
+  date: 2022-12-06
+  status: merged
+- repo: chatwoot/chatwoot
+  title: Fix the wa_source_id return value
+  url: https://github.com/chatwoot/chatwoot/pull/5451
+  date: 2022-09-29
+  status: merged
+- repo: laravel/framework
+  title: Enable dispatchAfterResponse for job batches
+  url: https://github.com/laravel/framework/pull/41787
+  date: 2022-04-04
+  status: merged
+- repo: laravel/framework
+  title: Enable batch job delays for the Beanstalkd queue
+  url: https://github.com/laravel/framework/pull/41789
+  date: 2022-04-02
+  status: merged
+- repo: laravel/framework
+  title: Enable batch job delays for the SQS queue
+  url: https://github.com/laravel/framework/pull/41788
+  date: 2022-04-02
+  status: merged
+- repo: laravel/framework
+  title: Enable batch job delays for the Redis queue
+  url: https://github.com/laravel/framework/pull/41783
+  date: 2022-04-01
+  status: merged
+- repo: laravel/framework
+  title: Enable batch job delays for the database queue
+  url: https://github.com/laravel/framework/pull/41758
+  date: 2022-03-31
+  status: merged

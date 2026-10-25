@@ -1,0 +1,39 @@
+{{ define "main" }}
+{{- $items := sort hugo.Data.opensource "date" "desc" }}
+{{- $merged := where $items "status" "merged" }}
+{{- $open := where $items "status" "open" }}
+{{- $closed := where $items "status" "closed" }}
+{{- $repos := slice }}
+{{- range $items }}{{ $repos = $repos | append .repo }}{{ end }}
+
+<div class="page-intro">
+  <h1 class="page-intro__title">{{ .Title }}</h1>
+  {{- with .Params.description }}
+  <p class="page-intro__desc">{{ . }}</p>
+  {{- end }}
+  <p class="oss-summary">
+    <span class="oss-summary__merged">{{ len $merged }} merged</span>,
+    <span class="oss-summary__open">{{ len $open }} open</span>,
+    <span>{{ len $closed }} closed</span>
+    across {{ len (uniq $repos) }} repositories
+  </p>
+</div>
+
+{{- /* A git graph: the trunk runs down the left, with years as tags on it. */}}
+<ol class="oss-graph">
+  {{- $year := "" }}
+  {{- range $items }}
+  {{- $y := substr (printf "%v" .date) 0 4 }}
+  {{- if ne $y $year }}
+  {{- $year = $y }}
+  <li class="oss-tag" id="{{ $y }}">
+    <svg class="oss-graph__lane" viewBox="0 0 40 32" aria-hidden="true">
+      <rect x="4" y="12" width="8" height="8" transform="rotate(45 8 16)" />
+    </svg>
+    <h2 class="oss-tag__label">{{ $y }}</h2>
+  </li>
+  {{- end }}
+  {{ partial "oss/pr.html" . }}
+  {{- end }}
+</ol>
+{{ end }}

@@ -30,18 +30,20 @@
 
 :root {
   /* Surfaces */
-  --bg: #000000;
-  --surface: #0d0d0d;
-  --border: #1f1f1f;
+  /* Off-black, not #000: pure black behind light text makes letters glow. */
+  --bg: #0a0a0a;
+  --surface: #121212;
+  --border: #222222;
 
   /* Text */
-  --text: #c9c9c9;
-  --text-strong: #ffffff;
+  --text: #c2c2c2;
+  --text-strong: #ededed;
   --text-muted: #8a8a8a;
 
   /* Accent */
   --accent: #a78bfa;
   --accent-dim: #7c5cf0;
+  --open: #4ade80;
 
   /* Type */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -267,6 +269,20 @@ main {
   font-size: 1rem;
   color: var(--text-muted);
   line-height: 1.3;
+}
+
+.prose {
+  line-height: 1.75;
+}
+
+/* Text stays at about 70 characters a line, the comfortable range for long
+   reading. Images, code, diagrams and tables use the full column. */
+.prose > :is(p, ul, ol, dl, blockquote, .callout, h1, h2, h3, h4, h5, h6, hr) {
+  max-width: 68ch;
+}
+
+.prose > p:has(> .md-img__a) {
+  max-width: none;
 }
 
 .prose > * + * {
@@ -529,7 +545,6 @@ main {
 
 .md-img {
   width: 100%;
-  max-width: 850px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
 }
@@ -623,25 +638,27 @@ main {
   margin-bottom: var(--space-2);
 }
 
-.toc--aside {
+.post-aside {
   display: none;
 }
 
 @media (min-width: 1200px) {
-  .post-body--toc {
+  .post-body {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 220px;
     gap: var(--space-6);
     align-items: start;
   }
 
-  .post-body--toc .post-main {
+  .post-main {
     grid-column: 1;
     grid-row: 1;
   }
 
-  .toc--aside {
-    display: block;
+  .post-aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
     grid-column: 2;
     grid-row: 1;
     position: sticky;
@@ -653,6 +670,20 @@ main {
   .toc--inline {
     display: none;
   }
+}
+
+.back-to-top {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  transition: color 0.15s ease;
+}
+
+.back-to-top::before {
+  content: "\2191  ";
+}
+
+.back-to-top:hover {
+  color: var(--accent);
 }
 
 .series {
@@ -694,6 +725,29 @@ a.series__link:hover {
   font-weight: 600;
 }
 
+.series--aside {
+  margin-top: 0;
+  border: 0;
+  border-radius: 0;
+  padding: var(--space-4) 0 0;
+  border-top: 1px solid var(--border);
+}
+
+.series--aside .series__title {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.series--aside .series__list {
+  margin-top: var(--space-2);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.series--aside .series__item + .series__item {
+  margin-top: var(--space-2);
+}
+
 /* ==========================================================================
    Post list (grouped by year)
    ========================================================================== */
@@ -720,7 +774,6 @@ a.series__link:hover {
   position: sticky;
   top: var(--space-4);
 }
-
 
 .post-list__item + .post-list__item {
   margin-top: var(--space-5);
@@ -802,11 +855,220 @@ a.series__link:hover {
 }
 
 /* ==========================================================================
+   Open source (git graph)
+   ========================================================================== */
+
+.oss-summary {
+  margin-top: var(--space-3);
+  font-family: var(--font-code);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+.oss-summary__merged {
+  color: var(--accent);
+}
+
+.oss-summary__open {
+  color: var(--open);
+}
+
+.oss-graph {
+  --lane: 40px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.oss-graph > li {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--lane) minmax(0, 1fr);
+  column-gap: var(--space-2);
+}
+
+/* The trunk: one continuous line through every row. */
+.oss-graph > li::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.oss-graph > li:first-child::before {
+  top: 16px;
+}
+
+.oss-graph > li:last-child::before {
+  bottom: auto;
+  height: 52px;
+}
+
+.oss-graph__lane {
+  position: relative;
+  display: block;
+  width: var(--lane);
+  height: auto;
+  overflow: visible;
+}
+
+.oss-tag {
+  padding-block: var(--space-4) var(--space-2);
+  align-items: center;
+}
+
+.oss-graph > .oss-tag:first-child {
+  padding-top: 0;
+}
+
+.oss-tag .oss-graph__lane rect {
+  fill: var(--bg);
+  stroke: var(--text-muted);
+  stroke-width: 2;
+}
+
+.oss-tag__label {
+  font-family: var(--font-mono);
+  font-size: var(--step-1);
+  font-weight: 700;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.oss-pr {
+  --branch: var(--text-muted);
+  padding-bottom: var(--space-3);
+}
+
+.oss-pr--merged {
+  --branch: var(--accent);
+}
+
+.oss-pr--open {
+  --branch: var(--open);
+}
+
+.oss-pr .oss-graph__lane path {
+  fill: none;
+  stroke: var(--branch);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.oss-pr .oss-graph__lane circle {
+  fill: var(--branch);
+}
+
+.oss-pr .oss-graph__lane .oss-pr__hollow {
+  fill: var(--bg);
+  stroke: var(--branch);
+  stroke-width: 2;
+}
+
+.oss-pr .oss-graph__lane .oss-pr__dash {
+  stroke-dasharray: 3 4;
+}
+
+.oss-pr__body {
+  padding-top: 6px;
+}
+
+.oss-pr__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-3);
+  font-family: var(--font-code);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+.oss-pr__status {
+  color: var(--branch);
+}
+
+.oss-pr__title {
+  display: inline-block;
+  margin-top: 2px;
+  color: var(--text-strong);
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  transition: color 0.15s ease;
+}
+
+.oss-pr__title:hover {
+  color: var(--branch);
+}
+
+.oss-pr--closed .oss-pr__title {
+  color: var(--text);
+}
+
+/* Recent pull requests on the home page */
+
+.oss-more {
+  color: var(--accent);
+  font-size: var(--step--1);
+  white-space: nowrap;
+}
+
+.oss-more::after {
+  content: " \2192";
+}
+
+.oss-home__title {
+  margin-bottom: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--step-1);
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.oss-home .oss-more {
+  display: inline-block;
+  margin-left: calc(40px + var(--space-2));
+}
+
+/* ==========================================================================
    Home intro
    ========================================================================== */
 
-.intro {
+.home-top {
+  display: grid;
+  gap: var(--space-6);
   margin-bottom: var(--space-6);
+}
+
+/* Intro on the left, recent pull requests on the right. */
+@media (min-width: 900px) {
+  .home-top {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    align-items: start;
+  }
+}
+
+.intro__social {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.intro__social a {
+  display: flex;
+  color: var(--text-muted);
+  transition: color 0.15s ease;
+}
+
+.intro__social a:hover {
+  color: var(--accent);
+}
+
+.intro__social svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
 }
 
 .intro__avatar {
@@ -829,14 +1091,6 @@ a.series__link:hover {
   margin-top: var(--space-1);
   color: var(--accent);
   font-size: var(--step--1);
-}
-
-.intro__bio {
-  margin-top: var(--space-3);
-  font-size: 1rem;
-  line-height: 1.65;
-  color: var(--text-muted);
-  text-wrap: pretty;
 }
 
 /* ==========================================================================

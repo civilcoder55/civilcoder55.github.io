@@ -1,6 +1,6 @@
 {{- /*
   Series navigation for posts that set `series` in front matter.
-  Context: dict "page" <page> "variant" "badge"|"list"
+  Context: dict "page" <page> "variant" "badge"|"list"|"aside"
 */ -}}
 {{- $page := .page -}}
 {{- with $page.Params.series -}}
@@ -14,7 +14,7 @@
   {{- if eq $.variant "badge" -}}
 <p class="series-badge">Part {{ $current }} of {{ len $parts }} · {{ $name }}</p>
   {{- else if gt (len $parts) 1 -}}
-<nav class="series" aria-label="{{ $name }}">
+<nav class="series{{ if eq $.variant "aside" }} series--aside{{ end }}" aria-label="{{ $name }}">
   <p class="series__title">{{ $name }}</p>
   <ol class="series__list">
     {{- range $parts }}
