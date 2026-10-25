@@ -1,14 +1,19 @@
 {{ define "main" }}
 {{- if .IsHome }}
-<div class="intro">
-  {{- with .Site.Params.authorAvatar }}
-  <img class="intro__avatar" src="{{ . | relURL }}" width="64" height="64" alt="" decoding="async">
-  {{- end }}
-  <h1 class="intro__name">{{ .Site.Params.author }}</h1>
-  {{- with .Site.Params.authorRole }}
-  <p class="intro__role">{{ . }}</p>
-  {{- end }}
-  <p class="intro__bio">{{ .Site.Params.description }}</p>
+<div class="home-top">
+  <div class="intro">
+    {{- with .Site.Params.authorAvatar }}
+    <img class="intro__avatar" src="{{ . | relURL }}" width="64" height="64" alt="" decoding="async">
+    {{- end }}
+    <h1 class="intro__name">{{ .Site.Params.author }}</h1>
+    {{- with .Site.Params.authorRole }}
+    <p class="intro__role">{{ . }}</p>
+    {{- end }}
+    <div class="intro__social">
+      {{ partial "social.html" . }}
+    </div>
+  </div>
+  {{ partial "oss/graph.html" . }}
 </div>
 {{- else }}
 <div class="page-intro">

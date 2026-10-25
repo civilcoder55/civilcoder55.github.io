@@ -50,7 +50,7 @@
 
 <a href="{{ $href | safeURL }}" class="md-img__a lightbox-image">
   <img class="md-img" src="{{ $src | safeURL }}" alt="{{ $alt }}"
-    {{- with $srcset }} srcset="{{ . }}" sizes="(max-width: 900px) 100vw, 850px"{{ end }}
+    {{- with $srcset }} srcset="{{ . }}" sizes="(max-width: 900px) 100vw, 860px"{{ end }}
     {{- if $width }} width="{{ $width }}" height="{{ $height }}"{{ end }}
     loading="lazy" decoding="async">
 </a>

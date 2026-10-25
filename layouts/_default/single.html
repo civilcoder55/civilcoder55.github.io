@@ -4,7 +4,10 @@
 {{- range .Fragments.HeadingsMap -}}
   {{- if and (ge .Level 2) (le .Level 3) }}{{ $tocEntries = add $tocEntries 1 }}{{ end -}}
 {{- end -}}
-{{- $showToc := ge $tocEntries 4 -}}
+{{- /* The sidebar has room for short tables of contents; above the post they
+       only earn their space on longer posts. */ -}}
+{{- $asideToc := ge $tocEntries 2 -}}
+{{- $inlineToc := ge $tocEntries 4 -}}
 <article>
   <header class="post-header">
     <p class="post-meta">
@@ -32,13 +35,17 @@
     {{- partial "series.html" (dict "page" . "variant" "badge") }}
   </header>
 
-  <div class="post-body{{ if $showToc }} post-body--toc{{ end }}">
-    {{- if $showToc }}
-    {{ partial "toc.html" (dict "page" . "variant" "aside") }}
-    {{- end }}
+  <div class="post-body">
+    <aside class="post-aside" aria-label="Post navigation">
+      {{- if $asideToc }}
+      {{ partial "toc.html" (dict "page" . "variant" "aside") }}
+      {{- end }}
+      {{ partial "series.html" (dict "page" . "variant" "aside") }}
+      <a class="back-to-top" href="#top">Back to top</a>
+    </aside>
 
     <div class="post-main">
-      {{- if $showToc }}
+      {{- if $inlineToc }}
       {{ partial "toc.html" (dict "page" . "variant" "inline") }}
       {{- end }}
       <div class="prose">
